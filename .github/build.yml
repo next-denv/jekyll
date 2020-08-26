@@ -1,0 +1,27 @@
+name: Build
+on:
+  push:
+    branches:
+    - '*'
+  pull_request:
+    branches:
+    - '*'
+jobs:
+  build:
+    name: Build Server
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: azure/docker-login@v1
+      with:
+        username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+        password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+    - name: Build the Docker image
+      run: |
+        export BRANCH=$(echo ${GITHUB_REF#refs/heads/})
+        export IMAGE=nextdenv/jekyll-$BRANCH:$(date +%Y%m%d)-$(echo ${GITHUB_SHA:0:7})
+        export LATEST_IMAGE=nextdenv/jekyll-$BRANCH:latest
+        docker build . --file ./Dockerfile --tag $IMAGE
+        docker tag $IMAGE $LATEST_IMAGE
+        docker push $IMAGE
+        docker push $LATEST_IMAGE

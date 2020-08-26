@@ -1,0 +1,13 @@
+version: "3"
+services:
+  node:
+    image: "nextdenv/jekyll-4.1.0:latest"
+    ports: 
+    # export containers ssh port, for vscode connection
+    - "20580:22"
+    volumes: 
+    # volume host code directory to container, keep from losing code when container recreated.
+    - "/home/code/jekyll:/srv/jekyll"
+    # volume ssh login info, create a ssh directory for each user,
+    # including authorized_keys for vscode connection and id_rsa for git clone.
+    - "/root/users/narro:/root/.ssh"
