@@ -1,10 +1,13 @@
-FROM jekyll/jekyll:4.1.0
+FROM ruby:2.7.1
 
-RUN apk add openssh && ssh-keygen -A
+RUN gem install jekyll bundler && \
+    apt update && apt upgrade -y &&  \
+    apt install -y openssh-server && \
+    mkdir -p /run/sshd /code
 
-VOLUME [ "/srv/jekyll", "/root/.ssh" ]
+VOLUME [ "/code", "/root/.ssh" ]
 
-WORKDIR /src/jekyll
+WORKDIR /code
 
 EXPOSE 22
 
